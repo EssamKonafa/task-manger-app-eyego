@@ -2,12 +2,12 @@ import axios from "axios";
 
 //------------------------------------------------------- instances ----------------------------------------------------------
 
-const instance = axios.create({
+export const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000",
     withCredentials: true,
 })
 
-const instancePrivate = axios.create({
+export const instancePrivate = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000",
     headers: { 'Content-Type': 'application/json' },
     withCredentials: true,
@@ -45,13 +45,27 @@ export async function userSignIn(values) {
 export async function userSignOut() {
     try {
         const response = await instance.post('/user/sign-out', {})
-        console.log(response);
         return response.data;
     } catch (error) {
         if (error.response) {
             throw new Error(error.response.data.message || "An error occurred during sign out");
         } else {
             throw new Error("An unknown error occurred during sign out");
+        }
+    }
+}
+
+export async function refreshToken() {
+    try {
+        const response = await instance.post('/user/refresh-token', {})
+        console.log('Refresh token response:', response.data);
+        return response.data.accessToken;
+    } catch (error) {
+        if (error.response) {
+            console.error('Error response:', error.response);
+            throw new Error(error.response.data.message || "An error occurred during refresh token");
+        } else {
+            throw new Error("An unknown error occurred during refresh-token");
         }
     }
 }
@@ -63,7 +77,7 @@ export async function getTasks() {
         const response = await instance.get('/task')
         return response.data;
     } catch (error) {
-        console.error(error)
+        // console.error(error)
         throw new Error("error while getting tasks")
     }
 }
@@ -75,17 +89,17 @@ export async function getUserTasks(userId, status) {
         )
         return response.data;
     } catch (error) {
-        console.error(error)
+        // console.error(error)
         throw new Error("error while getting user tasks")
     }
 }
 
-export async function addTask(userId, userName, task) {
+export async function addTask(axiosPrivate, userId, userName, task) {
     try {
-        const response = await instance.post('/task', { userId, userName, task })
+        const response = await axiosPrivate.post('/task', { userId, userName, task })
         return response.data;
     } catch (error) {
-        console.error(error)
+        // console.error(error)
         throw new Error("error while add task")
     }
 }
@@ -95,7 +109,7 @@ export async function updateTaskContent({ taskId, updatedTask }) {
         const response = await instance.patch(`/task/${taskId}`, { updatedTask })
         return response.data;
     } catch (error) {
-        console.error(error)
+        // console.error(error)
         throw new Error("error while updating task")
     }
 }
@@ -107,7 +121,7 @@ export async function updateTaskStatus({ taskId, taskStatus }) {
         const response = await instance.patch(`/task/${taskId}/status`, { taskStatus })
         return response.data;
     } catch (error) {
-        console.error(error)
+        // console.error(error)
         throw new Error("error while updating task status")
     }
 }
@@ -117,7 +131,7 @@ export async function deleteTask(taskId) {
         const response = await instance.delete(`/task/${taskId}`)
         return response.data;
     } catch (error) {
-        console.error(error)
+        // console.error(error)
         throw new Error("error while deleting task")
     }
 }

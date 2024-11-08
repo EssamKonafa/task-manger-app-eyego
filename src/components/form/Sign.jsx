@@ -25,7 +25,6 @@ function Sign({ formType }) {
     });
 
     const signUpMutation = useMutation({
-
         mutationFn: (values) => userSignUp(values),
         onSuccess() {
             toast.success("You Signed Up Successfully");
@@ -41,16 +40,16 @@ function Sign({ formType }) {
         mutationFn: (values) => userSignIn(values),
         onSuccess(data) {
             const user = {
-                userId:data.id,
+                userId: data.id,
                 userName: data.userName,
-                userEmail:data.userEmail
-            }
-            setUserStore(user,null)
+                userEmail: data.userEmail
+            };
+            setUserStore(user, null); 
             toast.success("You Signed in Successfully");
             router.push(`/`);
         },
         onError(error) {
-            console.log("Error signing up", error.message);
+            console.log("Error signing in", error.message);
             toast.error(error.message);
         },
     });
@@ -58,22 +57,22 @@ function Sign({ formType }) {
     const handleSubmit = async (values) => {
         try {
             if (formType === "sign-up") {
-                signUpMutation.mutate(values)
-            }
-            else if (formType === "sign-in") {
-                signInMutation.mutate(values)
+                signUpMutation.mutate(values);
+            } else if (formType === "sign-in") {
+                signInMutation.mutate(values);
             }
         } catch (error) {
             console.error("Error during form submission:", error);
-            if (err.response?.status === 409) {
+            if (error?.response?.status === 409) {
                 toast.error("This email is already registered. Please use a different email.");
-            } else if (err.response?.status === 400) {
-                toast.error(err.response.data.message);
+            } else if (error?.response?.status === 400) {
+                toast.error(error?.response?.data?.message);
             } else {
-                toast.error("An error occurred while adding the user.");
+                toast.error("An error occurred while processing your request.");
             }
         }
     };
+
 
     return (
         <div className='h-dvh content-center'>

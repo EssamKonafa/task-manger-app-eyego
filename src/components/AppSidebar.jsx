@@ -25,12 +25,13 @@ function AppSidebar() {
         { title: "incompleted", url: "/incompleted", icon: Circle, }
     ]
 
+    //signing user out
     const signOutMutation = useMutation({
         mutationFn: () => userSignOut(),
         onSuccess() {
             toast.success("You signed out successfully!")
             removeUserStatus()
-            router.refresh()
+            window.location.reload()
         },
     })
 

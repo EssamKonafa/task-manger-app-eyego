@@ -1,5 +1,6 @@
 'use client'
-import { addTask } from '@/API/httpClient';
+import { addTask, instancePrivate } from '@/API/httpClient';
+import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import useUserStore from '@/Stores/AuthStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, SendHorizonal } from 'lucide-react';
@@ -8,6 +9,8 @@ import { toast } from 'sonner';
 
 function AddTask() {
 
+    const axiosPrivate = useAxiosPrivate()
+
     const {userInfo} = useUserStore()
     //state for task string added by user
     const [taskInput, setTaskInput] = useState('');
@@ -15,7 +18,7 @@ function AddTask() {
     //mutation for adding task with error handling and validate query to refetch tasks to render it immediately after adding the user the new task
     const queryClient = useQueryClient();
     const addTaskMutation = useMutation({
-        mutationFn: () => addTask(userInfo.userId,userInfo.userName, taskInput),
+        mutationFn: () => addTask(axiosPrivate,userInfo.userId,userInfo.userName, taskInput),
         onSuccess() {
             queryClient.invalidateQueries()
             toast.success("task added successfully!")

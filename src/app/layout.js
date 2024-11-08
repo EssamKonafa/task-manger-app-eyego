@@ -28,22 +28,22 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <AuthPersistProvider> */}
-        <TanStackQueryProvider>
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarTrigger />
-            <div className="w-full">
-              <Toaster
-                richColors
-                position="top-center"
-                closeButton
-              />
-              {children}
-            </div>
-          </SidebarProvider>
-        </TanStackQueryProvider>
-        {/* </AuthPersistProvider> */}
+        <AuthPersistProvider>
+          <TanStackQueryProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarTrigger />
+              <div className="w-full">
+                <Toaster
+                  richColors
+                  position="top-center"
+                  closeButton
+                />
+                {children}
+              </div>
+            </SidebarProvider>
+          </TanStackQueryProvider>
+        </AuthPersistProvider>
       </body>
     </html>
   );
