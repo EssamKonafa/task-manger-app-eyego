@@ -1,12 +1,17 @@
 'use client'
 import React from 'react'
-import { AlignLeftIcon, CheckCircle, Circle, Settings, User2Icon, UserCog } from 'lucide-react'
+import { AlignLeftIcon, CheckCircle, Circle, Settings2, User2Icon, UserCog } from 'lucide-react'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar'
-import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Button } from './ui/button'
+import useUserStore from '@/Stores/AuthStore'
+import Link from 'next/link'
+import { useMutation } from '@tanstack/react-query'
+import { userSignOut } from '@/API/httpClient'
 
 function AppSidebar() {
+
+    const { userInfo,removeUserStatus } = useUserStore()
 
     // Determines the current path for dynamic styling
     const pathname = usePathname();
@@ -17,45 +22,62 @@ function AppSidebar() {
         { title: "All Tasks", url: "/", icon: AlignLeftIcon, },
         { title: "My Tasks", url: "/mytasks", icon: UserCog, },
         { title: "Completed", url: "/completed", icon: CheckCircle, },
-        { title: "Not Completed", url: "/incompleted", icon: Circle, }
+        { title: "incompleted", url: "/incompleted", icon: Circle, }
     ]
+
+    const signOutMutation = useMutation({
+        mutationFn: () => userSignOut(),
+        onSuccess() {
+            toast.success("You signed out successfully!")
+            removeUserStatus()
+            router.refresh()
+        },
+    })
 
     return (
         <div>
             <Sidebar>
                 <SidebarHeader>
-                    <div className="flex mx-auto cursor-pointer gap-x-2 py-2  mb-2 duration-500 rounded-md">
-                        {!items ?
-                        <>
-                        sign in or create your account
-                            <Button
-                                // onClick={() => signInMutation.mutate()}
-                                className="bg-black rounded-md font-semibold hover:bg-white hover:border border-black hover:text-black">
-                                Sign in
-                            </Button>
-                                    </>
+                    <div className="flex mx-auto space-x-2 pt-2  mb-2 duration-500 rounded-md">
+                        {!userInfo ?
+                            <div className='flex space-x-2 text-center'>
+                                <Link
+                                    href={'/sign-up'}
+                                    className="block py-2 px-5 bg-black rounded-md font-semibold text-white hover:bg-white border hover:border-black hover:text-black"
+                                >
+                                    Sign up
+                                </Link>
+                                <Link
+                                    href={'/sign-in'}
+                                    className="block py-2 px-5 bg-black rounded-md font-semibold text-white hover:bg-white border hover:border-black hover:text-black"
+                                >
+                                    Sign in
+                                </Link>
+                            </div>
                             :
                             <>
-                                <User2Icon className="w-12 h-12 rounded-3xl p-1 bg-black text-white " />
+                                <User2Icon className=" w-12 h-12 rounded-3xl p-1 bg-black text-white " />
                                 <div className="my-auto ">
                                     <p className="font-semibold text-[15px]">
-                                        {/* {userInfo.name} */}
-                                        user name
+                                        {userInfo.userName}
                                     </p>
                                     <p className="text-[#929292] text-[12px]">
-                                        {/* {userInfo.email} */}
-                                        user email
+                                        {userInfo.userEmail}
                                     </p>
-                                    <Button
-                                        className="bg-black rounded-md font-semibold hover:bg-red-500 hover:border-none"
-                                    // onClick={() => signOutMutation.mutate()}
-                                    >
-                                        Sign out
-                                    </Button>
+
                                 </div>
                             </>
                         }
                     </div>
+
+                    {userInfo &&
+                        <Button
+                            className="w-full bg-black rounded-md font-semibold hover:bg-red-500 hover:border-none"
+                            onClick={()=>signOutMutation.mutate()}
+                        >
+                            Sign out
+                        </Button>
+                    }
 
                 </SidebarHeader>
                 <SidebarContent>
@@ -81,7 +103,7 @@ function AppSidebar() {
                 </SidebarContent>
                 <SidebarFooter>
                     <div className="flex gap-x-2 cursor-pointer p-5 mx-auto rounded-xl duration-500 transition-all ">
-                        <Settings className="w-12 h-12 p-1 rounded-3xl bg-black text-white" />
+                        <Settings2 className="w-12 h-12 p-1 rounded-3xl bg-black text-white" />
                         <p className="font-semibold my-auto text-[15px]">Task Manger</p>
                     </div>
                 </SidebarFooter>

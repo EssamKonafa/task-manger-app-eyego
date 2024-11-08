@@ -1,7 +1,10 @@
 'use client'
+import useUserStore from '@/Stores/AuthStore';
 import React, { useEffect, useState } from 'react'
 
 function UserWelcome() {
+
+    const { userInfo } = useUserStore()
 
     const [currentDate, setCurrentDate] = useState('');
 
@@ -22,9 +25,7 @@ function UserWelcome() {
 
     return (
         <div>
-            <p className="font-semibold text-[25px]">Welcome Back
-                {/* {userInfo?.name}! */}
-            </p>
+            <p className="font-semibold text-[25px]">Welcome Back {userInfo?.userName}!</p>
             <p className="text-[20px]">{currentDate}</p>
         </div>
     )

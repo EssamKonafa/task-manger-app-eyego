@@ -2,6 +2,9 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import AppSidebar from "@/components/AppSidebar";
+import TanStackQueryProvider from "@/Providers/TanStackQueryProvider";
+import AuthPersistProvider from "@/Providers/AuthPersistProvider";
+import { Toaster } from "sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,13 +28,22 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarTrigger />
-          <div className="w-full">
-            {children}
-          </div>
-        </SidebarProvider>
+        {/* <AuthPersistProvider> */}
+        <TanStackQueryProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarTrigger />
+            <div className="w-full">
+              <Toaster
+                richColors
+                position="top-center"
+                closeButton
+              />
+              {children}
+            </div>
+          </SidebarProvider>
+        </TanStackQueryProvider>
+        {/* </AuthPersistProvider> */}
       </body>
     </html>
   );
